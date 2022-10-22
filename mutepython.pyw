@@ -7,7 +7,7 @@ import time
 from dotenv import load_dotenv
 import os 
 
-load_dotenv()
+# load_dotenv(dotenv_path=".env")
 
 #setup microphone as device
 device = AudioUtilities.GetMicrophone()
@@ -27,7 +27,7 @@ def on_connect(client, userdata, flags, rc):
     #subcribe to topic to see if the mute status is changed remotely
     client.subscribe("laptopMuteStatus/#")
 
-
+#recieve mqtt message, this may be a device sending a mute command
 def on_message(client, userdata, msg):
     global muteStatus
 
@@ -37,7 +37,9 @@ def on_message(client, userdata, msg):
     #if mute update, parse and act
     if topic == "laptopMuteStatus/muteStatus":
         if msg.payload.decode() == "ON":
+            #set mute on computer
             volume.SetMute(1, None)
+            #keep track of mutestatus locally
             muteStatus=1
         else:
             volume.SetMute(0, None)
@@ -55,7 +57,9 @@ def checkLocalMuteStatus():
 #push local mute status to mqtt
 def updateMuteStatus():
     global muteStatus
+    #get mute status from computer
     tempIsMuted=volume.GetMute()
+    #publish to mqtt
     if tempIsMuted == 1:
         muteStatus = 1
         client.publish("laptopMuteStatus/muteStatus", "ON")
