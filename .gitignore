@@ -3,6 +3,9 @@
 /build
 /dist
 /.vscode
+/env
+/.venv
 mutepython.spec
 setup.py
 .gitignore
+*.spec
