@@ -1,4 +1,4 @@
-from ctypes import cast, POINTER
+from ctypes import cast, POINTER, windll
 from comtypes import CLSCTX_ALL
 from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import paho.mqtt.client as mqtt 
@@ -17,15 +17,19 @@ volume = cast(interface, POINTER(IAudioEndpointVolume))
 muteStatus = 0
 
 #setup mqtt
-mqttBroker = os.environ.get('mqttBroker')
+# mqttBroker = os.environ.get('mqttBroker')
+# client = mqtt.Client("laptop_microphone_mute")
+# client.username_pw_set(os.environ.get('mqttUser'), password=os.environ.get('mqttPassword'))
+mqttBroker = "mqtt.mccarthyinternet.net"
 client = mqtt.Client("laptop_microphone_mute")
-client.username_pw_set(os.environ.get('mqttUser'), password=os.environ.get('mqttPassword'))
+client.username_pw_set("mqtt", password="VZh%&u2eQc9VN@9S".encode('utf-8'))
 
 #connect to mqtt broker
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
     #subcribe to topic to see if the mute status is changed remotely
     client.subscribe("laptopMuteStatus/#")
+    client.subscribe("computerLock/#")
 
 #recieve mqtt message, this may be a device sending a mute command
 def on_message(client, userdata, msg):
@@ -35,7 +39,11 @@ def on_message(client, userdata, msg):
     topic = msg.topic
     print(topic)
     #if mute update, parse and act
-    if topic == "laptopMuteStatus/muteStatus":
+    if topic == "computerLock":
+        if msg.payload.decode() == "ON":
+            windll.user32.LockWorkStation()
+
+    elif topic == "laptopMuteStatus/muteStatus":
         if msg.payload.decode() == "ON":
             #set mute on computer
             volume.SetMute(1, None)
