@@ -3,8 +3,14 @@
 /build
 /dist
 /.vscode
+<<<<<<< HEAD
 /.venv
 /.vscode
+=======
+/env
+/.venv
+>>>>>>> a40d0afa00c1516c79a8b6cddd8356f024fdc57a
 mutepython.spec
 setup.py
 .gitignore
+*.spec
