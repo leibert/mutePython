@@ -29,8 +29,7 @@ print("connecting as laptop_mutePython_"+socket.gethostname())
 #connect to mqtt broker
 def on_connect(client, userdata, flags, rc):
     print("Connected with result code "+str(rc))
-    #subcribe to topic to see if the mute status is changed remotely
-    client.subscribe("laptopMuteStatus/#")
+    #subcribe to topic to see if there is a mqtt message sent
     client.subscribe("computerLock/#")
 
 #recieve mqtt message, this may be a device sending a mute command
@@ -45,69 +44,14 @@ def on_message(client, userdata, msg):
         if msg.payload.decode() == "ON":
             windll.user32.LockWorkStation()
 
-    elif topic == "laptopMuteStatus/muteStatus":
-        if msg.payload.decode() == "ON":
-            #set mute on computer
-            volume.SetMute(1, None)
-            #keep track of mutestatus locally
-            muteStatus=1
-        else:
-            volume.SetMute(0, None)
-            muteStatus=0
-            
-
-
-#check if mute status has changed locally
-def checkLocalMuteStatus():
-    if volume.GetMute() != muteStatus:
-        print("local mute status changed")
-        updateMuteStatus()
-    
-
-#push local mute status to mqtt
-def updateMuteStatus():
-    global muteStatus
-    #get mute status from computer
-    tempIsMuted=volume.GetMute()
-    #publish to mqtt
-    if tempIsMuted == 1:
-        muteStatus = 1
-        client.publish("laptopMuteStatus/muteStatus", "ON")
-    else:
-        muteStatus = 0
-        client.publish("laptopMuteStatus/muteStatus", "OFF")
-    
-    
-
-
-
-
-
-
-
-# volume.GetMute()
-# #volume.GetMasterVolumeLevel()
-# #volume.GetVolumeRange()
-# #volume.SetMasterVolumeLevel(-20.0, None)
-# volume.GetMute()
-# volume.SetMute(1, None)
-# volume.GetMute()
-# volume.SetMute(0, None)
-
-
-
+         
 # Main function
 if __name__ == "__main__":
     client.on_connect = on_connect
     client.on_message = on_message
     client.connect(mqttBroker, 1883)
-    client.loop_start()
-    # client.loop_forever()
-
-    #publish inital mute status
-    updateMuteStatus()
+    client.loop()
 
     while True:
-        checkLocalMuteStatus()
         time.sleep(.1)
  

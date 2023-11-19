@@ -11,3 +11,7 @@ Video of it in action:
 
 https://user-images.githubusercontent.com/8097715/197355207-d9b6d1ae-79b9-49af-9e4b-dee789723447.mp4
 
+
+to build:
+pyinstaller .\mutepython.pyw -F -n mutePython
+
