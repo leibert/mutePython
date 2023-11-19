@@ -3,6 +3,8 @@
 /build
 /dist
 /.vscode
+/.venv
+/.vscode
 mutepython.spec
 setup.py
 .gitignore
