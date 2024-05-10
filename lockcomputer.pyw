@@ -1,6 +1,6 @@
 from ctypes import cast, POINTER, windll
 from comtypes import CLSCTX_ALL
-from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
+# from pycaw.pycaw import AudioUtilities, IAudioEndpointVolume
 import paho.mqtt.client as mqtt 
 
 import time
@@ -11,11 +11,11 @@ import socket
 # load_dotenv(dotenv_path=".env")
 
 #setup microphone as device
-device = AudioUtilities.GetMicrophone()
-interface = device.Activate(
-    IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
-volume = cast(interface, POINTER(IAudioEndpointVolume))
-muteStatus = 0
+# device = AudioUtilities.GetMicrophone()
+# interface = device.Activate(
+#     IAudioEndpointVolume._iid_, CLSCTX_ALL, None)
+# volume = cast(interface, POINTER(IAudioEndpointVolume))
+# muteStatus = 0
 
 #setup mqtt
 # mqttBroker = os.environ.get('mqttBroker')
